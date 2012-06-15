@@ -60,9 +60,6 @@ public class SensorAggregatorInterfaceTest {
     this.testInterface.setConnectionRetryDelay(CONN_RETRY_DELAY);
     Assert.assertEquals(CONN_RETRY_DELAY, this.testInterface.getConnectionRetryDelay());
     
-    this.testInterface.setConnectionTimeout(CONN_TIMEOUT_DELAY);
-    Assert.assertEquals(CONN_TIMEOUT_DELAY,this.testInterface.getConnectionTimeout());
-    
     this.testInterface.setMaxOutstandingSamples(MAX_SAMPLES);
     Assert.assertEquals(MAX_SAMPLES, this.testInterface.getMaxOutstandingSamples());
     

@@ -28,6 +28,11 @@ import com.owlplatform.common.SampleMessage;
 import com.owlplatform.sensor.protocol.messages.HandshakeMessage;
 
 
+/**
+ * Defines an IO adapter to be used by classes that respond to Sensor-Aggregator message events.
+ * @author Robert Moore
+ *
+ */
 public interface SensorIoAdapter
 {
 	/**

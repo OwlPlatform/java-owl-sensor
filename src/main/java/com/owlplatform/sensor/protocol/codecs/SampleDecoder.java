@@ -31,14 +31,22 @@ import org.slf4j.LoggerFactory;
 
 import com.owlplatform.common.SampleMessage;
 
+/**
+ * Decode a Sensor-Aggregator sample message.
+ * @author Robert Moore
+ *
+ */
 public class SampleDecoder implements MessageDecoder {
 
+  /**
+   * Logger for this class.
+   */
 	private static final Logger log = LoggerFactory
 			.getLogger(SampleDecoder.class);
 
+	@Override
 	public MessageDecoderResult decodable(IoSession arg0, IoBuffer arg1) {
 
-		// TODO: Decide on some max limit 64k is IP
 		if (arg1.prefixedDataAvailable(4, 65536)) {
 			arg1.mark();
 			int messageLength = arg1.getInt();
@@ -47,7 +55,6 @@ public class SampleDecoder implements MessageDecoder {
 				return MessageDecoderResult.NOT_OK;
 			}
 
-			byte messageType = arg1.get();
 			arg1.reset();
 
 			return MessageDecoderResult.OK;
@@ -56,6 +63,7 @@ public class SampleDecoder implements MessageDecoder {
 		return MessageDecoderResult.NEED_DATA;
 	}
 
+	@Override
 	public MessageDecoderResult decode(IoSession session, IoBuffer in,
 			ProtocolDecoderOutput out) throws Exception {
 		if (!in.prefixedDataAvailable(4, 65535)) {
@@ -64,7 +72,8 @@ public class SampleDecoder implements MessageDecoder {
 
 		SampleMessage message = new SampleMessage();
 		int remLength = in.getInt();
-		log.debug("Message length: {}", remLength);
+		if(log.isDebugEnabled()){
+		log.debug("Message length: {}", Integer.valueOf(remLength));}
 
 		message.setPhysicalLayer(in.get());
 		--remLength;
@@ -96,9 +105,9 @@ public class SampleDecoder implements MessageDecoder {
 		return MessageDecoderResult.OK;
 	}
 
+	@Override
 	public void finishDecode(IoSession arg0, ProtocolDecoderOutput arg1)
 			throws Exception {
-		// TODO Auto-generated method stub
-
+	  // Nothing to do
 	}
 }

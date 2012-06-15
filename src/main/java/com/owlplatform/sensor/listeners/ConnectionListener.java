@@ -21,30 +21,44 @@ package com.owlplatform.sensor.listeners;
 
 import com.owlplatform.sensor.SensorAggregatorInterface;
 
-public interface ConnectionListener
-{
-    /**
-     * Called when a connection to the aggregator is terminated and will not be reestablished.
-     * @param aggregator
-     */
-    public void connectionEnded(SensorAggregatorInterface aggregator);
-    
-    /**
-     * Called when a connection to the aggregator is opened.
-     * @param aggregator
-     */
-    public void connectionEstablished(SensorAggregatorInterface aggregator);
-    
-    /**
-     * Called when a connection to the aggregator is terminated, but may be reestablished.
-     * @param aggregator
-     */
-    public void connectionInterrupted(SensorAggregatorInterface aggregator);
-    
-    /**
-     * Called after the handshake messages have been exchanged and checked.  Samples may be sent
-     * to the aggregator.
-     * @param aggregator
-     */
-    public void readyForSamples(SensorAggregatorInterface aggregator);
+/**
+ * ConnectionListeners will be notified of connection-related events for a
+ * Sensor connecting to an aggregator. These events include connection
+ * establishment, end, interruption, and that the Aggregator is ready to receive
+ * samples.
+ * 
+ * @author Robert Moore
+ * 
+ */
+public interface ConnectionListener {
+  /**
+   * Called when a connection to the aggregator is terminated and will not be
+   * reestablished.
+   * 
+   * @param aggregator
+   */
+  public void connectionEnded(SensorAggregatorInterface aggregator);
+
+  /**
+   * Called when a connection to the aggregator is opened.
+   * 
+   * @param aggregator
+   */
+  public void connectionEstablished(SensorAggregatorInterface aggregator);
+
+  /**
+   * Called when a connection to the aggregator is terminated, but may be
+   * reestablished.
+   * 
+   * @param aggregator
+   */
+  public void connectionInterrupted(SensorAggregatorInterface aggregator);
+
+  /**
+   * Called after the handshake messages have been exchanged and checked.
+   * Samples may be sent to the aggregator.
+   * 
+   * @param aggregator
+   */
+  public void readyForSamples(SensorAggregatorInterface aggregator);
 }

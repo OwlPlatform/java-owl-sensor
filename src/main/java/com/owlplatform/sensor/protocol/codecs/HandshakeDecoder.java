@@ -17,12 +17,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 package com.owlplatform.sensor.protocol.codecs;
+
 import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
 
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
-import org.apache.mina.filter.codec.CumulativeProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.apache.mina.filter.codec.demux.MessageDecoder;
 import org.apache.mina.filter.codec.demux.MessageDecoderResult;
@@ -31,93 +30,119 @@ import org.slf4j.LoggerFactory;
 
 import com.owlplatform.sensor.protocol.messages.HandshakeMessage;
 
+/**
+ * Decodes a Sensor-Aggregator handshake message.
+ * 
+ * @author Robert Moore
+ * @see HandshakeMessage
+ */
 public class HandshakeDecoder implements MessageDecoder {
 
-	private static final Logger log = LoggerFactory
-			.getLogger(HandshakeDecoder.class);
+  /**
+   * Logger for this class.
+   */
+  private static final Logger log = LoggerFactory
+      .getLogger(HandshakeDecoder.class);
 
-	public static final String CONN_STATE_KEY = HandshakeDecoder.class
-			.getName()
-			+ ".STATE";
+  /**
+   * Connection state key to track if the handshake was decoded on this session
+   * yet.
+   */
+  public static final String CONN_STATE_KEY = HandshakeDecoder.class.getName()
+      + ".STATE";
 
-	static final class HubConnectionState {
-		boolean handshakeReceived = false;
-	};
+  /**
+   * Tracks whether a handshake message was received or not.
+   * 
+   * @author Robert Moore
+   * 
+   */
+  static final class HubConnectionState {
+    /**
+     * Flag to indicate that a handshake was decoded.
+     */
+    boolean handshakeReceived = false;
+  }
 
-	private static final Charset charsetASCII = Charset.forName("US-ASCII");
+  /**
+   * Charset for encoding the protocol name.
+   */
+  private static final Charset charsetASCII = Charset.forName("US-ASCII");
 
-	public MessageDecoderResult decodable(IoSession arg0, IoBuffer arg1) {
-		HubConnectionState connState = (HubConnectionState) arg0
-				.getAttribute(CONN_STATE_KEY);
+  @Override
+  public MessageDecoderResult decodable(IoSession arg0, IoBuffer arg1) {
+    HubConnectionState connState = (HubConnectionState) arg0
+        .getAttribute(CONN_STATE_KEY);
 
-		if (connState == null) {
-			log.debug("Creating new handshake connection state for {}.", arg0);
-			connState = new HubConnectionState();
-			connState.handshakeReceived = false;
-			arg0.setAttribute(CONN_STATE_KEY, connState);
-		}
+    if (connState == null) {
+      log.debug("Creating new handshake connection state for {}.", arg0);
+      connState = new HubConnectionState();
+      connState.handshakeReceived = false;
+      arg0.setAttribute(CONN_STATE_KEY, connState);
+    }
 
-		if (connState.handshakeReceived) {
-			return MessageDecoderResult.NOT_OK;
-		}
+    if (connState.handshakeReceived) {
+      return MessageDecoderResult.NOT_OK;
+    }
 
-		if (!arg1.prefixedDataAvailable(4,
-				HandshakeMessage.PROTOCOL_STRING_LENGTH)) {
-			log.debug("Not yet decodable with only {} bytes.",arg1.remaining());
-			return MessageDecoderResult.NEED_DATA;
-		}
+    if (!arg1.prefixedDataAvailable(4, HandshakeMessage.PROTOCOL_STRING_LENGTH)) {
+      log.debug("Not yet decodable with only {} bytes.",
+          Integer.valueOf(arg1.remaining()));
+      return MessageDecoderResult.NEED_DATA;
+    }
 
-		// TODO: Need better logic to determine decodability
-		return MessageDecoderResult.OK;
-	}
+    // TODO: Need better logic to determine decodability
+    return MessageDecoderResult.OK;
+  }
 
-	public MessageDecoderResult decode(IoSession arg0, IoBuffer arg1,
-			ProtocolDecoderOutput arg2) throws Exception {
-		HubConnectionState connState = (HubConnectionState) arg0
-				.getAttribute(CONN_STATE_KEY);
-		if (connState == null) {
-			log.debug("Creating new handshake connection state for {}.", arg0);
-			connState = new HubConnectionState();
-			connState.handshakeReceived = false;
-			arg0.setAttribute(CONN_STATE_KEY, connState);
-		}
+  @Override
+  public MessageDecoderResult decode(IoSession arg0, IoBuffer arg1,
+      ProtocolDecoderOutput arg2) throws Exception {
+    HubConnectionState connState = (HubConnectionState) arg0
+        .getAttribute(CONN_STATE_KEY);
+    if (connState == null) {
+      log.debug("Creating new handshake connection state for {}.", arg0);
+      connState = new HubConnectionState();
+      connState.handshakeReceived = false;
+      arg0.setAttribute(CONN_STATE_KEY, connState);
+    }
 
-		// If handshake already received, skip this decoder
-		if (connState.handshakeReceived) {
-			log.warn("Handshake already received.");
-			return MessageDecoderResult.NOT_OK;
-		}
+    // If handshake already received, skip this decoder
+    if (connState.handshakeReceived) {
+      log.warn("Handshake already received.");
+      return MessageDecoderResult.NOT_OK;
+    }
 
+    if (arg1.prefixedDataAvailable(4, HandshakeMessage.PROTOCOL_STRING_LENGTH)) {
+      HandshakeMessage message = new HandshakeMessage();
+      message.setStringLength(arg1.getInt());
+      if (message.getStringLength() != HandshakeMessage.PROTOCOL_STRING_LENGTH) {
+        throw new RuntimeException(String.format(
+            "Handshake protocol string length is incorrect: %d",
+            Integer.valueOf(message.getStringLength())));
+      }
 
-		if (arg1.prefixedDataAvailable(4,
-				HandshakeMessage.PROTOCOL_STRING_LENGTH)) {
-			HandshakeMessage message = new HandshakeMessage();
-			message.setStringLength(arg1.getInt());
-			if (message.getStringLength() != HandshakeMessage.PROTOCOL_STRING_LENGTH) {
-				throw new RuntimeException(String.format(
-						"Handshake protocol string length is incorrect: %d",
-						message.getStringLength()));
-			}
+      message
+          .setProtocolString(String.valueOf(arg1.getString(
+              message.getStringLength(),
+              HandshakeDecoder.charsetASCII.newDecoder())));
+      message.setVersionNumber(arg1.get());
+      message.setReservedBits(arg1.get());
 
-			message.setProtocolString(String.valueOf(arg1.getString(message
-					.getStringLength(), HandshakeDecoder.charsetASCII
-					.newDecoder())));
-			message.setVersionNumber(arg1.get());
-			message.setReservedBits(arg1.get());
+      arg2.write(message);
+      log.debug("Decoded {}.", message);
+      connState.handshakeReceived = true;
+      return MessageDecoderResult.OK;
+    }
+    // Entire message is not yet available
+    log.warn("Insufficient buffer size: {}.", Integer.valueOf(arg1.remaining()));
+    return MessageDecoderResult.NEED_DATA;
+  }
 
-			arg2.write(message);
-			log.debug("Decoded {}.", message);
-			connState.handshakeReceived = true;
-			return MessageDecoderResult.OK;
-		}
-		// Entire message is not yet available
-		log.warn("Insufficient buffer size: {}.",arg1.remaining());
-		return MessageDecoderResult.NEED_DATA;
-	}
-
-	public void finishDecode(IoSession arg0, ProtocolDecoderOutput arg1)
-			throws Exception {
-		// Nothing to do
-	}
+  @Override
+  public void finishDecode(IoSession arg0, ProtocolDecoderOutput arg1)
+      throws Exception {
+    // Nothing to do
+  }
 
 }

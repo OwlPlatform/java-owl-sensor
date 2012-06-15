@@ -30,24 +30,52 @@ import org.slf4j.LoggerFactory;
 import com.owlplatform.common.SampleMessage;
 import com.owlplatform.sensor.protocol.messages.HandshakeMessage;
 
+/**
+ * An Apache MINA IOHandler specifically for Sensor-Aggregator connections.
+ * @author Robert Moore
+ *
+ */
 public class SensorIoHandler implements IoHandler {
 
+  /**
+   * Logger for this class.
+   */
 	private static final Logger log = LoggerFactory
 			.getLogger(SensorIoHandler.class);
 
+	/**
+	 * The IOAdapter that will respond to events from this handler.
+	 */
 	protected SensorIoAdapter sensorIoAdapter;
 
+	/**
+	 * Creates a new IOHandler with the provided IOAdapter to handle events. 
+	 * @param sensorIoAdapter the IOAdapter that will receive the events.
+	 */
 	public SensorIoHandler(SensorIoAdapter sensorIoAdapter) {
 		this.sensorIoAdapter = sensorIoAdapter;
 	}
 
+	
+	/**
+	 * Passes the Throwable to the IOAdapter.
+	 */
+	@Override
 	public void exceptionCaught(IoSession session, Throwable cause)
 			throws Exception {
 		log.error("Unhandled exception caught in session {}: {}", session,
 				cause);
-
+		this.sensorIoAdapter.exceptionCaught(session, cause);
 	}
 
+	/**
+	 * Demultiplexes the message type and passes it to the appropriate method of
+	 * the IOAdapter.
+	 * 
+	 * @see SensorIoAdapter#sensorSampleReceived(IoSession, SampleMessage)
+	 * @see SensorIoAdapter#handshakeMessageReceived(IoSession, HandshakeMessage)
+	 */
+	@Override
 	public void messageReceived(IoSession session, Object message)
 			throws Exception {
 		log.debug("{} <-- {}", session, message);
@@ -78,8 +106,13 @@ public class SensorIoHandler implements IoHandler {
 
 	}
 
+	/**
+	 * Demultiplexes the sent message and passes it to the appropriate method of the IOAdapter.
+	 * @see SensorIoAdapter#sensorSampleSent(IoSession, SampleMessage)
+	 * @see SensorIoAdapter#handshakeMessageSent(IoSession, HandshakeMessage)
+	 */
+	@Override
 	public void messageSent(IoSession session, Object message) throws Exception {
-
 		log.debug("{} --> {}", message, session);
 		if (this.sensorIoAdapter == null) {
 			log.warn("No SensorIoAdapter defined. Ignoring message to {}: {}",
@@ -104,6 +137,10 @@ public class SensorIoHandler implements IoHandler {
 
 	}
 
+	/**
+	 * Notifies the IOAdapter that the session has closed.
+	 */
+	@Override
 	public void sessionClosed(IoSession session) throws Exception {
 		log.debug("Session closed for sensor {}.", session);
 		if (this.sensorIoAdapter != null) {
@@ -111,10 +148,18 @@ public class SensorIoHandler implements IoHandler {
 		}
 	}
 
+	/**
+	 * Ignored, and only sessionOpened events are handled.
+	 */
+	@Override
 	public void sessionCreated(IoSession session) throws Exception {
 		// Handle sessionOpened events instead
 	}
 
+	/**
+	 * Passes the idle event to the IOAdapter.
+	 */
+	@Override
 	public void sessionIdle(IoSession session, IdleStatus status)
 			throws Exception {
 		log.debug("Sensor session for {} is idle: {}", session, status);
@@ -124,6 +169,10 @@ public class SensorIoHandler implements IoHandler {
 
 	}
 
+	/**
+	 * Notifies the IOAdapter that the session has connected.
+	 */
+	@Override
 	public void sessionOpened(IoSession session) throws Exception {
 		log.debug("Session opened for sensor {}.", session);
 		if (this.sensorIoAdapter != null) {

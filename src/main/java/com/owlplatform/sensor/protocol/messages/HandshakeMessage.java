@@ -29,14 +29,16 @@ import org.slf4j.LoggerFactory;
 import com.owlplatform.common.util.NumericUtils;
 
 /**
- * Represents a handshake message between a Sensor and an Aggregator as defined in the 
- * GRAIL RTLS v3 Sensor-Aggregator protocol.
+ * Represents a Sensor-Aggregator handshake message.
  * 
- * @author Robert Moore II
+ * @author Robert Moore
  *
  */
 public class HandshakeMessage {
 	
+  /**
+   * Logger for this class.
+   */
 	private static final Logger log = LoggerFactory.getLogger(HandshakeMessage.class);
 
 	/**
@@ -187,6 +189,12 @@ public class HandshakeMessage {
 		return super.equals(o);
 	}
 	
+	/**
+	 * Compares two HandshakeMessage objects for equality based on version number, reserved bits,
+	 * and protocol string.
+	 * @param message the handshake to compare.
+	 * @return {@code true} if this object is equal to {@code o}, else {@code false}.
+	 */
 	public boolean equals(HandshakeMessage message)
 	{
 		if(this.versionNumber != message.versionNumber)
@@ -208,4 +216,12 @@ public class HandshakeMessage {
 		}
 		return true;
 	}
+
+  @Override
+  public int hashCode() {
+    int hash = this.stringLength;
+    hash ^= this.protocolString.hashCode();
+    hash ^= Arrays.hashCode(new byte[]{this.versionNumber,this.reservedBits});
+    return hash;
+  }
 }

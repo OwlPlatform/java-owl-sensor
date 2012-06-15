@@ -18,33 +18,45 @@
  */
 
 package com.owlplatform.sensor.protocol.codecs;
-import org.apache.mina.filter.codec.demux.DemuxingProtocolCodecFactory;
 
+import org.apache.mina.filter.codec.demux.DemuxingProtocolCodecFactory;
 
 import com.owlplatform.common.SampleMessage;
 import com.owlplatform.sensor.protocol.messages.HandshakeMessage;
 
+/**
+ * Creates a new protocol codec factory for the Sensor-Aggregator protocol.
+ * 
+ * @author Robert Moore
+ * 
+ */
+public class AggregatorSensorProtocolCodecFactory extends
+    DemuxingProtocolCodecFactory {
 
-public class AggregatorSensorProtocolCodecFactory extends DemuxingProtocolCodecFactory {
-	
-    public static final String CODEC_NAME = "Grail Sensor-Aggregator codec";
-    
-	public AggregatorSensorProtocolCodecFactory(boolean server)
-	{
-		super();
-		if(server)
-		{
-			super.addMessageEncoder(HandshakeMessage.class, HandshakeEncoder.class);
-			
-			super.addMessageDecoder(SampleDecoder.class);
-			super.addMessageDecoder(HandshakeDecoder.class);
-		}
-		else
-		{
-			super.addMessageEncoder(HandshakeMessage.class, HandshakeEncoder.class);
-			super.addMessageDecoder(HandshakeDecoder.class);
-			super.addMessageEncoder(SampleMessage.class, SampleEncoder.class);
-		}
-	}
-	
+  /**
+   * Identifier for the protocol codec chain.
+   */
+  public static final String CODEC_NAME = "Grail Sensor-Aggregator codec";
+
+  /**
+   * Factory to generate a Sensor-Aggregator protocol code.
+   * 
+   * @param server
+   *          {@code true} if the codec should be for the aggregator, or
+   *          {@code false} for sensors.
+   */
+  public AggregatorSensorProtocolCodecFactory(boolean server) {
+    super();
+    if (server) {
+      super.addMessageEncoder(HandshakeMessage.class, HandshakeEncoder.class);
+
+      super.addMessageDecoder(SampleDecoder.class);
+      super.addMessageDecoder(HandshakeDecoder.class);
+    } else {
+      super.addMessageEncoder(HandshakeMessage.class, HandshakeEncoder.class);
+      super.addMessageDecoder(HandshakeDecoder.class);
+      super.addMessageEncoder(SampleMessage.class, SampleEncoder.class);
+    }
+  }
+
 }

@@ -291,12 +291,19 @@ public class SensorAggregatorInterface {
       }
 
       if (this.stayConnected) {
+        long retryDelay = this.connectionRetryDelay;
+        if(timeout < this.connectionRetryDelay*2){
+          retryDelay = timeout /2 ;
+          if(retryDelay < 100){
+            retryDelay = 100;
+          }
+        }
         try {
           log.warn(String.format(
               "Connection to %s:%d failed, waiting %dms before retrying.",
               this.host, Integer.valueOf(this.port),
-              Long.valueOf(this.connectionRetryDelay)));
-          Thread.sleep(this.connectionRetryDelay);
+              Long.valueOf(retryDelay)));
+          Thread.sleep(retryDelay);
         } catch (InterruptedException ie) {
           // Ignored
         }

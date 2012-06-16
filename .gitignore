@@ -1,0 +1,12 @@
+# Output files
+*.class
+bin
+target
+
+# Eclipse files
+.project
+.classpath
+.settings
+
+# Backups
+*~

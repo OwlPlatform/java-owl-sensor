@@ -36,7 +36,7 @@ public class AggregatorSensorProtocolCodecFactory extends
   /**
    * Identifier for the protocol codec chain.
    */
-  public static final String CODEC_NAME = "Grail Sensor-Aggregator codec";
+  public static final String CODEC_NAME = "Owl Platform Sensor-Aggregator codec";
 
   /**
    * Factory to generate a Sensor-Aggregator protocol code.

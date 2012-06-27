@@ -42,9 +42,10 @@ This library depends on the following libraries:
   Downloads")
 
 Optionally, you can provide a binding for the SLF4J facade.  If you don't want
-any logging, you can use [SLF4J NOP] v1.6.6, or see the [SLF4J
+any logging, you can use the No-Op binding, or see the [SLF4J
 website](http://www.slf4j.org "Simple Logging Facade for Java") for more
-options.
+options. The most common bindings are all available in the same download
+archive.
 
 ## Compiling ##
 This library should be compiled using the Apache Maven project management

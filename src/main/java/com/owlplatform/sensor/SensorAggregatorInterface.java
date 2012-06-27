@@ -269,8 +269,11 @@ public class SensorAggregatorInterface {
    * @return {@code true} if the connection is established within the timeout
    *         period, else {@code false}.
    */
-  public boolean connect(long timeout) {
-    this.connectionTimeout = timeout;
+  public boolean connect(long maxWait) {
+    long timeout = maxWait;
+    if (timeout <= 0) {
+      timeout = this.connectionTimeout;
+    }
     if (this.connector == null) {
       if (!this.setConnector()) {
         log.error("Unable to set up connection to the aggregator.");
@@ -285,6 +288,7 @@ public class SensorAggregatorInterface {
     long waitTime = timeout;
     do {
       long startAttempt = System.currentTimeMillis();
+      this.connector.setConnectTimeoutMillis(waitTime-5);
       if (this._connect(waitTime)) {
         log.debug("Connection succeeded!");
         return true;
@@ -292,17 +296,16 @@ public class SensorAggregatorInterface {
 
       if (this.stayConnected) {
         long retryDelay = this.connectionRetryDelay;
-        if(timeout < this.connectionRetryDelay*2){
-          retryDelay = timeout /2 ;
-          if(retryDelay < 100){
-            retryDelay = 100;
+        if (timeout < this.connectionRetryDelay * 2) {
+          retryDelay = timeout / 2;
+          if (retryDelay < 500) {
+            retryDelay = 500;
           }
         }
         try {
           log.warn(String.format(
               "Connection to %s:%d failed, waiting %dms before retrying.",
-              this.host, Integer.valueOf(this.port),
-              Long.valueOf(retryDelay)));
+              this.host, Integer.valueOf(this.port), Long.valueOf(retryDelay)));
           Thread.sleep(retryDelay);
         } catch (InterruptedException ie) {
           // Ignored
@@ -787,9 +790,9 @@ public class SensorAggregatorInterface {
   }
 
   /**
-   * Returns {@code true} if the connection is ready to send sample messages. Classes
-   * that wish to be notified asynchronously when samples can be sent, should register as a
-   * {@code ConnectionListener}.
+   * Returns {@code true} if the connection is ready to send sample messages.
+   * Classes that wish to be notified asynchronously when samples can be sent,
+   * should register as a {@code ConnectionListener}.
    * 
    * @return {@code true} if samples can be sent, else {@code false}.
    */
@@ -802,7 +805,9 @@ public class SensorAggregatorInterface {
   }
 
   /**
-   * The maximum number of sample messages that are allowed to be buffered before causing a send failure.
+   * The maximum number of sample messages that are allowed to be buffered
+   * before causing a send failure.
+   * 
    * @return the current maximum number of bufferable sample messages.
    */
   public int getMaxOutstandingSamples() {
@@ -811,7 +816,9 @@ public class SensorAggregatorInterface {
 
   /**
    * Sets the maximum number of sample messages allowed to be buffered.
-   * @param maxOutstandingSamples the new maximum value.
+   * 
+   * @param maxOutstandingSamples
+   *          the new maximum value.
    */
   public void setMaxOutstandingSamples(int maxOutstandingSamples) {
     this.maxOutstandingSamples = maxOutstandingSamples;

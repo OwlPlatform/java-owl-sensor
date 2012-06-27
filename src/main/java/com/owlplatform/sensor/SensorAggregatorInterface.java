@@ -262,9 +262,9 @@ public class SensorAggregatorInterface {
    * Initiates a connection to the Aggregator (if it is not yet connected). If
    * {@code #stayConnected} is {@code true}, then this method will NOT return
    * until a connection is established or the timeout is exceeded. A timeout of
-   * 0 indicates an infinite timeout value.
+   * 0 means the configured timeout value will be used.
    * 
-   * @param timeout
+   * @param maxWait
    *          how long to wait (in milliseconds) for the connection to
    * @return {@code true} if the connection is established within the timeout
    *         period, else {@code false}.

@@ -24,8 +24,7 @@ License along with this library; if not, write to the
 Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 Boston, MA  02110-1301, USA.
 
-== About ==
-
+## About ##
 The Sensor-Aggregator library is an implementation of the GRAIL
 Sensor-Aggregator network protocol for the Java language.  It provides the
 ability for a Java application to act as a sensor for the Owl Platform, with
@@ -33,8 +32,7 @@ the primary objective of forwarding a stream of Sample messages to the
 aggregator.  It fully implements all required and optional components of the
 network protocol.
 
-== Dependencies ==
-
+## Dependencies ##
 This library depends on the following libraries:
 * [Owl Common Library version 1.0.2] (https://github.com/OwlPlatform/java-owl-common/downloads 
   "Owl Common Library Downloads")
@@ -48,9 +46,7 @@ any logging, you can use [SLF4J NOP] v1.6.6, or see the [SLF4J
 website](http://www.slf4j.org "Simple Logging Facade for Java") for more
 options.
 
-
-== Compiling ==
-
+## Compiling ##
 This library should be compiled using the Apache Maven project management
 tool.  The project is currently compatible with Apache Maven version 3,
 which can be downloaded for free at <http://maven.apache.org/>.  To build

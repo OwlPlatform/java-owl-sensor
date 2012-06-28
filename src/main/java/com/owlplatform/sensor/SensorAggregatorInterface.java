@@ -398,10 +398,11 @@ public class SensorAggregatorInterface {
    * filters that are already created. Resets the connection state.
    */
   protected void _disconnect() {
-    if (this.session != null) {
+    IoSession currentSession = this.session;
+    if (currentSession != null && !currentSession.isClosing()) {
       log.info("Closing connection to aggregator at {}.",
-          this.session.getRemoteAddress());
-      this.session.close(true);
+          currentSession.getRemoteAddress());
+      currentSession.close(true);
       this.session = null;
       this.sentHandshake = null;
       this.receivedHandshake = null;

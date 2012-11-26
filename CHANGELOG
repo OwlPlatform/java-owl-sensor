@@ -4,6 +4,12 @@
 Owl Platform: <http://www.owlplatform.com>
 Project Website: <https://github.com/OwlPlatform/java-owl-sensor>
 
+Version 1.0.3 - October 17, 2012
+ + Updating MINA dependency (2.0.7).
+
+Version 1.0.2 - Octobery 17, 2012
+ + Updating dependencies.
+
 Version 1.0.1 - June 27, 2012
  + Initial version ported from GRAIL RTLS at SourceForge.net.
    <http://www.sf.net/projects/grailrtls/>

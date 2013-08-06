@@ -43,7 +43,6 @@ import com.owlplatform.sensor.protocol.messages.HandshakeMessage;
  * Aggregators to forward sensor data to another aggregator.
  * 
  * @author Robert Moore
- * 
  */
 public class SensorAggregatorInterface {
 
@@ -52,7 +51,6 @@ public class SensorAggregatorInterface {
    * SensorAggregatorInterface.
    * 
    * @author Robert Moore
-   * 
    */
   private static final class AdapterHandler implements SensorIoAdapter {
 
@@ -288,7 +286,7 @@ public class SensorAggregatorInterface {
     long waitTime = timeout;
     do {
       long startAttempt = System.currentTimeMillis();
-      this.connector.setConnectTimeoutMillis(waitTime-5);
+      this.connector.setConnectTimeoutMillis(waitTime - 5);
       if (this._connect(waitTime)) {
         log.debug("Connection succeeded!");
         return true;
@@ -327,7 +325,6 @@ public class SensorAggregatorInterface {
    * until a connection is established. If callers wish to remain connected to
    * the aggregator, it is best to call {@code #setStayConnected(true)} only
    * after calling this method.
-   * 
    * This method has been replaced by {@link #connect(long)}, and is equivalent
    * to calling {@code #connect(0)}.
    * 
@@ -399,10 +396,14 @@ public class SensorAggregatorInterface {
    */
   protected void _disconnect() {
     IoSession currentSession = this.session;
-    if (currentSession != null && !currentSession.isClosing()) {
-      log.info("Closing connection to aggregator at {}.",
-          currentSession.getRemoteAddress());
-      currentSession.close(true);
+    if (currentSession != null) {
+      if (!currentSession.isClosing()) {
+
+        log.info("Closing connection to aggregator at {}.",
+            currentSession.getRemoteAddress());
+        currentSession.close(true);
+
+      }
       this.session = null;
       this.sentHandshake = null;
       this.receivedHandshake = null;

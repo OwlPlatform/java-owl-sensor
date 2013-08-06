@@ -1,9 +1,9 @@
 Owl Platform Sensor-Aggregator Library for Java
 ===============================================
 
-Version 1.0.4-SNAPSHOT
+Version 1.0.4
 
-Last updated October 17, 2012
+Last updated August 6, 2013
 
 Project Website: <https://github.com/OwlPlatform/java-owl-sensor>
 

@@ -173,7 +173,7 @@ public class SensorAggregatorInterface {
   /**
    * The port number the aggregator is listening on for sensors.
    */
-  private int port = -1;
+  private int port = 7007;
 
   /**
    * The session of the connected aggregator, or {@code null} if no connection

@@ -6,6 +6,7 @@ Project Website: <https://github.com/OwlPlatform/java-owl-sensor>
 
 Version 1.0.4 - August 6, 2013
  + Fixing issue #2 - reconnection failure.
+ + Adding default port numbers (Issue #1).
 
 Version 1.0.3 - October 17, 2012
  + Updating MINA dependency (2.0.7).

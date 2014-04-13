@@ -4,6 +4,8 @@
 Owl Platform: <http://www.owlplatform.com>
 Project Website: <https://github.com/OwlPlatform/java-owl-sensor>
 
+Version 1.0.5 - TBD
+
 Version 1.0.4 - April 12, 2014
  + Migrating to Apache Mina Jar dependency (from Bundle).
  + Fixing issue #2 - reconnection failure.

@@ -1,7 +1,7 @@
 Owl Platform Sensor-Aggregator Library for Java
 ===============================================
 
-Version 1.0.4
+Version 1.0.5
 
 Last updated April 12, 2014
 

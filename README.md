@@ -3,11 +3,11 @@ Owl Platform Sensor-Aggregator Library for Java
 
 Version 1.0.4
 
-Last updated August 6, 2013
+Last updated April 12, 2014
 
 Project Website: <https://github.com/OwlPlatform/java-owl-sensor>
 
-Copyright (C) 2012 Robert Moore and the Owl Platform
+Copyright (C) 2012-2014 Robert Moore and the Owl Platform
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Library General Public
